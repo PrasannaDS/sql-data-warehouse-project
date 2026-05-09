@@ -1,16 +1,26 @@
 /*
+==============================================================================
+Quality Checks
+==============================================================================
 Script Purpose:
-  All the quality check queries for each table are over here.
-  It is especially provides data correctness checks for silver
-  schema after loading the data from bronze schema.
+  This script performs various quality checks for data consistency, accuracy,
+  and standardization across the 'silver' schema. It includes checks for:
+  - Null or Duplicate primary keys.
+  - Unwanted spaces in string fields.
+  - Data standardization and consistency.
+  - Invalid date ranges and orders.
+  - Data consistency between related fields.
+
+Usage Notes:
+  - Run these checks after data loading into Silver Layer.
+  - Investigate and resolve any discrepancies found during the checks.
+==============================================================================
 */
 -- ===========================================================
 -- Checking 'silver.crm_cust_info'
 -- ===========================================================
-
 -- Check for Nulls or Duplicates in Primary Key Column
 -- Expectation: No Nulls or Duplicates
-
 SELECT 
   cst_id,
   COUNT(*) AS cnt
@@ -21,14 +31,12 @@ OR cst_id IS NULL;
 
 -- Check for unwanted spaces in customer marital status column
 -- Expectation: No Unwanted Spaces
-
 SELECT * 
 FROM bronze.crm_cust_info
 WHERE cst_marital_status != TRIM(cst_marital_status);
 
 -- Check for unwanted spaces in customer gender column
 -- Expectation: No Unwanted Spaces
-
 SELECT * 
 FROM bronze.crm_cust_info
 WHERE cst_gndr != TRIM(cst_gndr);
@@ -46,7 +54,6 @@ FROM bronze.crm_cust_info;
 
 --  Check for customer create date column for any NULLs and future dates
 -- Expectation: No NULLs or Future Dates
-
 SELECT * 
 FROM bronze.crm_cust_info
 WHERE cst_create_date IS NULL 
@@ -55,10 +62,8 @@ OR cst_create_date > GETDATE();
 -- ===========================================================
 -- Checking 'silver.crm_prd_info'
 -- ===========================================================
-
 --  Check for Nulls or Duplicates in Primary Key Column
 -- Expectation: No Nulls or Duplicates
-
 SELECT 
   prd_id,COUNT(*) AS cnt
 FROM silver.crm_prd_info
@@ -66,10 +71,8 @@ GROUP BY prd_id
 HAVING COUNT(*) > 1 
 OR prd_id IS NULL;
 
-
 --  Check for Nulls in Product Key Column
 -- Expectation: No Nulls
-
 SELECT 
   prd_key,
 COUNT(*) AS cnt
@@ -80,28 +83,24 @@ OR prd_key IS NULL;
 
 -- Check for unwanted spaces in product name
 -- Expectation: No Unwanted Spaces
-
 SELECT * 
 FROM silver.crm_prd_info
 WHERE prd_nm != TRIM(prd_nm);
 
 -- Check for unwanted spaces in product key column
 -- Expectation: No Unwanted Spaces
-
 SELECT * 
 FROM silver.crm_prd_info
 WHERE prd_key != TRIM(prd_key);
 
 -- Check for cardinality and consistency in product line column
 -- Expectation: Cardinality should be less than 10 and values should be consistent with the product line in the sales details table
-
 SELECT DISTINCT 
   prd_line 
 FROM silver.crm_prd_info;
 
 -- Check for Nulls or Negative numbers in Product Cost Column
 -- Expectation: No Nulls or Negative Numbers
-
 SELECT *
 FROM silver.crm_prd_info
 WHERE prd_cost IS NULL 
@@ -109,7 +108,6 @@ OR prd_cost < 0;
 
 -- Check for invalid dates in product start and end date columns
 -- Expectation: No Invalid Dates and End Date should be greater than Start Date
-
 SELECT *
 FROM silver.crm_prd_info
 WHERE prd_end_dt < prd_start_dt;
@@ -117,10 +115,8 @@ WHERE prd_end_dt < prd_start_dt;
 -- ===========================================================
 -- Checking 'silver.crm_sales_details'
 -- ===========================================================
-
 -- Check for NULLs and Duplicates in sales order number column
 -- Expectation: No NULLs or Duplicates
-
 SELECT
   sls_ord_num, 
   COUNT(*) AS cnt
@@ -131,7 +127,6 @@ OR sls_ord_num IS NULL;
 
 -- Check for unwanted spaces in sales order number column
 -- Expectation: No Unwanted Spaces
-
 SELECT
 *
 FROM silver.crm_sales_details
@@ -139,7 +134,6 @@ WHERE sls_ord_num != TRIM(sls_ord_num)
 
 -- Checking the Integrity of product keys in sales details table with product keys in product info table
 -- Expectation: All product keys in sales details should have a matching product key in product info
-
 SELECT DISTINCT sls_prd_key
 FROM silver.crm_sales_details
 WHERE sls_prd_key NOT IN (
@@ -149,7 +143,6 @@ WHERE sls_prd_key NOT IN (
 
 -- Checking the Integrity of Customer IDs in sales details table with customer IDs in customer info table
 -- Expectation: All customer IDs in sales details should have a matching customer ID in customer info
-
 SELECT DISTINCT sls_cst_id
 FROM silver.crm_sales_details
 WHERE sls_cst_id NOT IN (
@@ -158,7 +151,7 @@ WHERE sls_cst_id NOT IN (
   FROM silver.crm_cust_info);
 
 -- Check for Invalid dates
-
+-- Expectation: All dates should be as per standards
 SELECT 
   sls_ord_num,
   sls_order_dt
@@ -190,7 +183,6 @@ OR sls_due_dt > 20500101
 OR sls_due_dt < 19000101  -- Assuming date is in YYYYMMDD
 
 -- Checking the dates consistency - Ship date should not be before order date and due date should not be before order date
-
 SELECT
   sls_ord_num,
   sls_order_dt,
@@ -203,7 +195,6 @@ OR sls_order_dt > sls_due_dt
 -- Check Data Consistency between Sales, Quantity and Price columns
 -- >> Sales = Quantity * Price
 -- >> Values must not be negative, NULL or zero
-
 SELECT DISTINCT
     sls_sales,
     sls_quantity,
@@ -221,10 +212,8 @@ ORDER BY  sls_sales, sls_quantity, sls_price;
 -- ===========================================================
 -- Checking 'silver.erp_cust_az12'
 -- ===========================================================
-
 -- Check for Nulls or Duplicates in Primary Key Column and consistency of customer IDs with customer info table
 -- Expectation: No Nulls or Duplicates and all customer IDs should be consistent with customer info table
-
 SELECT 
 *
 FROM silver.erp_cust_az12
@@ -234,24 +223,20 @@ END NOT IN (SELECT DISTINCT cst_key FROM silver.crm_cust_info)
 
 -- Check for invalid dates in birthdate column
 -- Expectation: No Invalid Dates and Birthdate should not be in the future
-
 SELECT
 bdate
 FROM silver.erp_cust_az12
 WHERE bdate > GETDATE() OR bdate < '1900-01-01' -- Assuming birthdate should be between 1900 and current date
 
 -- Check for data standardization and consistency
-
 SELECT DISTINCT gen
 FROM silver.erp_cust_az12
 
 -- ===========================================================
 -- Checking 'silver.erp_loc_a101'
 -- ===========================================================
-
 -- Check for Nulls or Duplicates in Primary Key Column and consistency of customer IDs with customer info table
 -- Expectation: No Nulls or Duplicates and all customer IDs should be consistent with customer info table
-
 SELECT 
   cid, 
   COUNT(*) AS cnt
@@ -272,7 +257,6 @@ WHERE cid NOT IN (
 
 -- Check the country names Consistency and standardization
 -- Expectation: Country names should be consistent and standardized (e.g., USA, United States, US should be standardized to one value)
-
 SELECT DISTINCT 
   cntry
 FROM silver.erp_loc_a101;
@@ -280,18 +264,17 @@ FROM silver.erp_loc_a101;
 -- ===========================================================
 -- Checking 'silver.erp_px_cat_g1v2'
 -- ===========================================================
-
 -- Check the id for nulls and duplicates from category table
 -- Expectation: No Nulls and Duplicates
-
-SELECT id, COUNT(*) cnt
+SELECT 
+  id, 
+  COUNT(*) cnt
 FROM silver.erp_px_cat_g1v2
 GROUP BY id
 HAVING id IS NULL OR COUNT(*)>1;
 
 -- Data Consistency of category id with the cat_id from product info table 
 -- Expectation: Data is consistant with given condition
-
 SELECT
     id,
     cat,
@@ -305,7 +288,6 @@ WHERE id NOT IN (
 
 -- Check the Category column for Invalid Values like NULLs and Empty Strings
 -- Expectation:  No NULLs or Empty strings
-
 SELECT DISTINCT
   cat 
 FROM silver.erp_px_cat_g1v2
@@ -320,7 +302,6 @@ FROM silver.erp_px_cat_g1v2
 
 -- Check for any unwanted spaces
 -- Expectation: No extra spaces
-
 SELECT * 
 FROM silver.erp_px_cat_g1v2
 WHERE cat != TRIM(cat) 
