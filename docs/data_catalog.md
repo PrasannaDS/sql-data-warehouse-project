@@ -13,7 +13,8 @@ tables and fact tables for specific business metrics.
   geographic data.
   
   Columns:
-
+  
+|  |  |  |
 |:--:|:--:|:--:|
 | Column Name | Data Type | Description |
 | customer_key | INT | Surrogate key uniquely identifying each customer record in the dimension table. |
