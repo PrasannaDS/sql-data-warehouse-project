@@ -1,4 +1,16 @@
--- Part-to-Whole Proportional Analysis -> (Measure/Total Measure)*100 BY Dimension
+/*
+==============================================================================================
+Part-to-Whole / Proportional Analysis
+==============================================================================================
+Analyze how an individual part is performing compared to the overall, allowing us to
+understand which category has the greatest impact on the business.
+
+Syntax ==> {([MEASURE] / Total [MEASURE])* 100} By [DIMENSION] 
+        e.g: {(Sales/Total Sales)*100} By Category
+
+  - Which categories contribute the most to overall sales
+==============================================================================================
+*/
 
 -- Which categories contribute the most to overall sales
 
