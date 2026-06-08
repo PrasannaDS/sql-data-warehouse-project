@@ -1,4 +1,16 @@
--- Date Exploration
+/*
+=======================================================================
+Date Exploration
+=======================================================================
+Identifying the earliest and latest dates(boundaries). Understand the
+scope of data and the timespan.
+Syntax ==> MIN/MAX [DIMENSION]
+       ==> DATEDIFF(FORMAT, MIN(DIMENSION), MAX(DIMENSION))
+  - Find the date of fist and last order
+  - How many years of sales available 
+  - Find the youngest and oldest customer
+=======================================================================
+*/
 -- Find the date of fist and last order
 -- How many years of sales available
 
