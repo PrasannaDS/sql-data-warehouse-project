@@ -1,5 +1,21 @@
--- Data Segmentation -> Measure by Measure
+/*
+==============================================================================================
+Data Segmentation
+==============================================================================================
+Group the data based on a specific range. Helps understand the correlation between two
+measures.
 
+Syntax ==> [MEASURE] By [MEASURE] 
+        e.g: Total Products By Sales range
+
+  - Segment products into cost ranges and count how many products fall into each segment
+  - Group Customers into three segments based on their spending behaviour:
+        - VIP: at least 12 months of history and spending more than $5000
+        - Regular: at least 12 months of history and spending $5000 or less
+        - New: lifespan less than 12 months
+    And find the total number of customers by each group.
+==============================================================================================
+*/
 -- Segment products into cost ranges and count how many products fall into each segment
 
 WITH product_segments AS(
