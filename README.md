@@ -91,6 +91,7 @@ data-warehouse-project/
 │   ├── bronze/                         # Scripts for extracting and loading raw data
 │   ├── silver/                         # Scripts for cleaning and transforming data
 │   ├── gold/                           # Scripts for creating analytical models
+│   ├── data_analysis/                  # Scripts for exploratory and advanced data analysis
 │
 ├── tests/                              # Test scripts and quality files
 │
