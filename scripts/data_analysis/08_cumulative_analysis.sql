@@ -1,9 +1,21 @@
+/*
+==============================================================================================
+Cumulative Analysis
+==============================================================================================
+Aggregate the data progressively over time. Helps to understand whether our business is 
+growing or declining.
 
- -- Cumulative Analysis -> Cumulative Measure By Date Measure
+Syntax ==> [CUMULATIVE MEASURE] By [DATE DIMENSION] e.g: Running Total Sales By Year
 
- -- Calculate the total sales per month.
- -- And calculate the running total of sales over time
+Default Window Frame:
+ BETWEEN UNBOUNDED PRECEEDING AND CURRENT ROW
 
+  - Calculate the total sales per month. And calculate the running total of sales over time
+  - Calculate Running sales total over year
+  - Calculate the moving average of price over years
+==============================================================================================
+*/
+ -- Calculate the total sales per month. And calculate the running total of sales over time
 SELECT
 order_date,
 total_sales,
@@ -17,7 +29,7 @@ FROM(
     GROUP BY DATETRUNC(month, order_date)
 ) t 
 
- -- Running total over year
+ -- Running sales total over year
 
 SELECT
 order_date,
