@@ -1,10 +1,23 @@
+/*
+==============================================================================================
+Performance Analysis
+==============================================================================================
+Comparing the current value to a target value. Helps measure success and compate the dimension
+performance.
 
--- Performance Analysis -> Current Measure - Target Measure
+Syntax ==> Current [MEASURE] - Target [MEASURE] 
+        e.g: Current Year Sales - Previous Year Sales (Year-Over-Year Analysis)
 
--- Analyze the yearly performance of products by comparing each product's sales
--- to both its average sales performance and the previous year's sales
+  - Analyze the yearly performance of products by comparing each product's sales to both its 
+    average sales performance and the previous year's sales (Using Year-Over-Year Analysis)
 
+==============================================================================================
+*/
 
+/*
+Analyze the yearly performance of products by comparing each product's sales to both its average 
+sales performance and the previous year's sales
+*/
 WITH yearly_product_sales AS (
     SELECT
         p.product_name,
