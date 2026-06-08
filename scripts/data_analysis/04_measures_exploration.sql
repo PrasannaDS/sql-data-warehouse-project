@@ -1,5 +1,21 @@
+/*
+=======================================================================
+Measures Exploration
+=======================================================================
+Calculate the key metrics of the business (Big Numbers).
+- Highest Level of Aggregation | Lowest Level of Details:
 
--- Measures Exploration
+Syntax ==> SUM/AVG/COUNT [DIMENSION]
+  - Find The Total Sales 
+  - Find how many items are sold 
+  - Find the average selling price
+  - Find the total number of Orders
+  - Find the total number of products
+  - Find the total number of customers
+  - Find the total number of customers that has placed an order
+  - Generate a Report that shows all key metrics of the business
+=======================================================================
+*/
 -- Find The Total Sales 
 SELECT 
 SUM(sales_amount) AS total_sales
